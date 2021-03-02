@@ -135,6 +135,84 @@ connection.connect((err) => {
 //     choices: ['tbd - need to show the list of employees'],
 // })
 
+// after they select to add an employee
+// const employees = () => {
+//     // query the database for all items being auctioned
+//     connection.query('SELECT * FROM employee', (err, results) => {
+//       if (err) throw err;
+//       inquirer
+//         .prompt([
+//           {
+//             name: 'manager',
+//             type: 'rawlist',
+//             choices() {
+//                 // this array holds just the name of the employee that gets pushed up here by that foreach down yonder
+//               const employeeName = [];
+//               /*
+//               [
+//                 {
+//                     id: 4567,
+//                     first_name: 'Brenna',
+//                     last_name: 'McLeod',
+//                     position_id: 3456,
+//                 not sure how null is represented here
+//                     manager_id: ,
+//                 },
+//                 ...
+//                 ]
+//               */
+//             //  need to concat first/last?
+//              results.forEach((employee) => {
+//                 employeeName.push(employee.first_name);
+//             });
+//               return employeeName;
+//             },
+//             message: "Who is the employee's manaager?",
+//           },
+//           {
+//             name: 'bid',
+//             type: 'input',
+//             message: 'How much would you like to bid?',
+//           },
+//         ])
+//         .then((answer) => {
+//           // get the information of the chosen item
+//           let chosenItem;
+//           results.forEach((item) => {
+//             if (item.item_name === answer.choice) {
+//               chosenItem = item;
+//             }
+//           });
+  
+//           // determine if bid was high enough
+//           if (chosenItem.highest_bid < parseInt(answer.bid)) {
+//             // bid was high enough, so update db, let the user know, and start over
+//             //  UPDATE auctions SET highest_bid = 10 WHERE id = 1
+//             connection.query(
+//               'UPDATE auctions SET ? WHERE ?',
+//               [
+//                 {
+//                   highest_bid: answer.bid,
+//                 },
+//                 {
+//                   id: chosenItem.id,
+//                 },
+//               ],
+//               (error) => {
+//                 if (error) throw err;
+//                 console.log('Bid placed successfully!');
+//                 start();
+//               }
+//             );
+//           } else {
+//             // bid wasn't high enough, so apologize and start over
+//             console.log('Your bid was too low. Try again...');
+//             start();
+//           }
+//         });
+//     });
+//   };
+
 
 //======= McLeod: all of this stuff came from the Great Bay activity to show inquirer stuff:
 
@@ -218,6 +296,7 @@ const start = () => {
             name: 'choice',
             type: 'rawlist',
             choices() {
+                // this array holds just the name of the auction item that gets pushed up here by that foreach down yonder
               const choiceArray = [];
               /*
               [
