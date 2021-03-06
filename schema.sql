@@ -1,15 +1,6 @@
-DROP DATABASE IF EXISTS department;
-DROP DATABASE IF EXISTS position;
-DROP DATABASE IF EXISTS employee;
-CREATE DATABASE department;
-CREATE DATABASE position;
-CREATE DATABASE employee;
-
-USE department;
-USE position;
-USE employee;
-
--- ================================
+DROP DATABASE IF EXISTS employees;
+CREATE DATABASE employees;
+USE employees;
 
 CREATE TABLE department(
   id INT NOT NULL AUTO_INCREMENT,
@@ -23,15 +14,13 @@ CREATE TABLE department(
 --     department: 'ABC co',
 -- }
 
--- ================================
-
--- department_id is what needs to link this to the department table
 CREATE TABLE position(
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(30) NOT NULL,
   salary DECIMAL(12,2) NOT NULL,
   department_id INT NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
 -- for easy reference later:
@@ -44,14 +33,15 @@ CREATE TABLE position(
 
 -- ================================
 
--- position_id is what needs to link employee to their position (role)
 CREATE TABLE employee(
   id INT NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   position_id INT NOT NULL,
   manager_id INT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  FOREIGN KEY (position_id) REFERENCES position(id),
+  FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
 
 -- for easy reference later:

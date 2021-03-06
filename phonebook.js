@@ -214,6 +214,10 @@ connection.connect((err) => {
 //   };
 
 
+// console.log(
+//     `${first_name} ${last_name}`
+// )
+
 //======= McLeod: all of this stuff came from the Great Bay activity to show inquirer stuff:
 
 // function which prompts the user for what action they should take
