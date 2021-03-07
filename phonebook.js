@@ -19,7 +19,15 @@ const start = () => {
       choices: ['View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager'],
     })
     .then((answer) => {
-        connection.end();
+      // const query = 'SELECT title, salary, department_id FROM position';
+      // connection.query(query, (err, res) => {
+      //   res.forEach(({title, salary, department_id}) => {
+      //     console.log(
+      //       `Title: ${title} || Salary: ${salary} || Department: ${department_id}`
+      //     ); 
+      //   });
+      // });
+      connection.end();
     });
 };
 
@@ -28,7 +36,6 @@ const start = () => {
   connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
-    // connection.end();
     // run the start function after the connection is made to prompt the user
     start();
   });

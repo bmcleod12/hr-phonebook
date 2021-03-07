@@ -2,7 +2,7 @@ INSERT INTO department (department)
 VALUES
     ('Engineering'), ('Marketing'), ('Sales');
 
-INSERT INTO position (title, salary, department_id)
+INSERT INTO role (title, salary, department_id)
 VALUES
     ('Quality Assurance', 80000, 1),
     ('Developer', 90000, 1),
@@ -14,7 +14,7 @@ VALUES
     ('Sales Representative', 100000, 3),
     ('Head of Sales', 220000, 3);
 
-INSERT INTO employee (first_name, last_name, position_id, manager_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
     ('Megan', 'Jones', 3, NULL),
     ('Josie', 'Jackson', 1, 1),
