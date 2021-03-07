@@ -19,17 +19,51 @@ const start = () => {
       choices: ['View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager'],
     })
     .then((answer) => {
-      // const query = 'SELECT title, salary, department_id FROM position';
-      // connection.query(query, (err, res) => {
-      //   res.forEach(({title, salary, department_id}) => {
-      //     console.log(
-      //       `Title: ${title} || Salary: ${salary} || Department: ${department_id}`
-      //     ); 
-      //   });
-      // });
-      connection.end();
-    });
-};
+      console.log(answer.intro);
+      switch (answer.intro) {
+        case 'View All Employees by Department':
+          employeebyDept();
+          break;
+
+        // case 'View All Employees by Manager':
+        //   employeebyMgr();
+        //   break;
+
+        // case 'Add Employee':
+        //   addEmployee();
+        //   break;
+
+        // case 'Remove Employee':
+        //   removeEmployee();
+        //   break;
+
+        // case 'Update Employee Role':
+        //   updateRole();
+        //   break;
+
+        // case 'Update Employee Manager':
+        //   updateMgr();
+        //   break;
+          
+        default:
+          console.log(`Invalid action: ${answer.intro}`);
+          break;
+      }
+      });
+
+    };
+
+      function employeebyDept() {
+        const query = 'SELECT title, salary, department_id FROM employees.role';
+        connection.query(query, (err, res) => {
+          res.forEach(({title, salary, department_id}) => {
+            console.log(
+              `Title: ${title} || Salary: ${salary} || Department: ${department_id}`
+            ); 
+          });
+        });
+        connection.end();
+      };
 
 
   // connect to the mysql server and sql database
