@@ -18,12 +18,17 @@ const actionList = () => {
       type: 'list',
       message: 'What would you like to do?',
       choices: [
+        'View All Departments',
+        'View All Roles',
+        'View All Employees',
         'View All Employees by Department', 
         'View All Employees by Manager',
-        'Add Employee', 
-        'Remove Employee', 
+        'Add Department',
+        'Add Role',
+        'Add Employee',
         'Update Employee Role', 
         'Update Employee Manager', 
+        'Remove Employee',
         'Exit'],
     })
     .then((answer) => {
