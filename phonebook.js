@@ -84,28 +84,6 @@ const actionList = () => {
 
       // adds a new employee to the db after collecting their information
       function addEmployee() {
-        // establishes empty arrays to be populated by queries
-        let allRoles = [];
-        let allEmployees = [];
-
-        // pushes each Role into an array to be used by a choice question
-        connection.query("SELECT title AS 'Role' FROM employees.role", (err, res) => {
-          if (err) throw err;
-          res.forEach(({Role}) => {
-            allRoles.push(Role);
-          });
-          return allRoles;
-        });
-
-        // pushes each Employee into an array to be used by a choice question
-        connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee", (err, res) => {
-          if (err) throw err;
-          res.forEach(({Employee}) => {
-            allEmployees.push(Employee);
-            return allEmployees;
-            })
-          });
-
         inquirer
         .prompt([
         {
