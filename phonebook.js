@@ -116,23 +116,54 @@ function allEmployees() {
   actionList();
 };
 
-// collects output of Department | Employee | Employee Role |
-function employeebyDept() {
-  const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
-  connection.query(query, (err, res) => {
-    console.table(res);
-  });
-  actionList();
-};
+// adds a new department to the db after collecting its name
+function addDept() {
+  inquirer
+    .prompt([
+      {
+        name: 'dept_name',
+        type: 'input',
+        message: "What is the department's name?",
+      }
+      ])
+    .then((answer) => {
+      connection.query(`INSERT INTO department (department) VALUES ("${answer['dept_name']}")`,
+        (err, res) => {
+          if (err) throw err;
+          console.log("Department added!");
+          actionList();
+        });
+    });
+}
 
-// collects output of Manager | Employee | Employee Role
-function employeebyMgr() {
-  const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL";
-  connection.query(query, (err, res) => {
-    console.table(res);
-  });
-  actionList();
-};
+// adds a new role to the db after collecting its information
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        name: 'role_title',
+        type: 'input',
+        message: "What is the name of the role?",
+      },
+      {
+        name: 'role_salary',
+        type: 'input',
+        message: "What is the salary for this role?",
+      },
+      {
+        name: 'role_dept',
+        type: 'input',
+        message: "Enter the ID for the Department this role belongs to.",
+      }])
+    .then((answer) => {
+      connection.query(`INSERT INTO role (title, salary, department_id) VALUES ("${answer['role_title']}", ${answer['role_salary']}, ${answer['role_dept']})`,
+        (err, res) => {
+          if (err) throw err;
+          console.log("Role added!");
+          actionList();
+        });
+    });
+}
 
 // adds a new employee to the db after collecting their information
 function addEmployee() {
@@ -198,7 +229,23 @@ function removeEmployee() {
       });
   });
 };
+// collects output of Department | Employee | Employee Role |
+function employeebyDept() {
+  const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
+  connection.query(query, (err, res) => {
+    console.table(res);
+  });
+  actionList();
+};
 
+// collects output of Manager | Employee | Employee Role
+function employeebyMgr() {
+  const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL";
+  connection.query(query, (err, res) => {
+    console.table(res);
+  });
+  actionList();
+};
 // changes out an employee's manager
 function updateMgr() {
   const query = 'SELECT title, salary, department_id FROM employees.role';
