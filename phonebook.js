@@ -27,7 +27,6 @@ const actionList = () => {
         'Add Role',
         'Add Employee',
         'Update Employee Role',
-        'Update Employee Manager',
         'Remove Employee',
         'Exit'],
     })
@@ -70,10 +69,6 @@ const actionList = () => {
           updateRole();
           break;
 
-        case 'Update Employee Manager':
-          updateMgr();
-          break;
-
         case 'Remove Employee':
           removeEmployee();
           break;
@@ -110,6 +105,24 @@ function allRoles() {
 // collects output of First Name | Last Name | Role | Department | Salary | Manager
 function allEmployees() {
   const query = "SELECT e.id AS 'ID', e.first_name AS 'First Name', e.last_name AS 'Last Name', role.title as 'Role', department.department AS 'Department', role.salary AS 'Salary', concat(m.first_name, ' ' ,  m.last_name) AS 'Manager' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id";
+  connection.query(query, (err, res) => {
+    console.table(res);
+  });
+  actionList();
+};
+
+// collects output of Department | Employee | Employee Role |
+function employeebyDept() {
+  const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
+  connection.query(query, (err, res) => {
+    console.table(res);
+  });
+  actionList();
+};
+
+// collects output of Manager | Employee | Employee Role
+function employeebyMgr() {
+  const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL";
   connection.query(query, (err, res) => {
     console.table(res);
   });
@@ -200,6 +213,37 @@ function addEmployee() {
     });
 }
 
+// changes out an employee's manager
+function updateRole() {
+    inquirer
+      .prompt([{
+        name: 'emp_role',
+        type: 'input',
+        message: "Enter the ID of the employee whose role you want to update.",
+      },
+      {
+        name: 'new_role',
+        type: 'input',
+        message: "Enter the new Role ID.",
+      }])
+      .then((answer) => {
+        connection.query("UPDATE employees.employee SET ? WHERE ?",
+        [
+          {
+            role_id: answer.new_role
+          },
+          {
+            id: answer.emp_role
+          },
+        ],
+          (err, res) => {
+            if (err) throw err;
+            console.log("Employee deleted!");
+            actionList();
+          });
+      });
+};
+
 // removes employee of choice from the db
 function removeEmployee() {
   // collects the first and last names and concatenates them into "Employee" which is then pushed to an arry for user selection
@@ -229,32 +273,6 @@ function removeEmployee() {
       });
   });
 };
-// collects output of Department | Employee | Employee Role |
-function employeebyDept() {
-  const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
-  connection.query(query, (err, res) => {
-    console.table(res);
-  });
-  actionList();
-};
-
-// collects output of Manager | Employee | Employee Role
-function employeebyMgr() {
-  const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL";
-  connection.query(query, (err, res) => {
-    console.table(res);
-  });
-  actionList();
-};
-// changes out an employee's manager
-function updateMgr() {
-  const query = 'SELECT title, salary, department_id FROM employees.role';
-  connection.query(query, (err, res) => {
-    console.table(res);
-  });
-  actionList();
-};
-
 
 // connect to the mysql server and sql database
 connection.connect((err) => {
@@ -263,7 +281,3 @@ connection.connect((err) => {
   // run the start function after the connection is made to prompt the user
   actionList();
 });
-
-// // console.log(
-// //     `${first_name} ${last_name}`
-// // )
