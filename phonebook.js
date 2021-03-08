@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+// const consoleTable = require('console.table');
 
 // establishes connection to db
 const connection = mysql.createConnection({
@@ -106,6 +107,7 @@ function allRoles() {
 function allEmployees() {
   const query = "SELECT e.id AS 'ID', e.first_name AS 'First Name', e.last_name AS 'Last Name', role.title as 'Role', department.department AS 'Department', role.salary AS 'Salary', concat(m.first_name, ' ' ,  m.last_name) AS 'Manager' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id";
   connection.query(query, (err, res) => {
+    console.log("--------------------------------------------");
     console.table(res);
   });
   actionList();
