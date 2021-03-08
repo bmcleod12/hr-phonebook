@@ -84,42 +84,66 @@ const actionList = () => {
 
       // adds a new employee to the db after collecting their information
       function addEmployee() {
-        const query = 'SELECT title, salary, department_id FROM employees.role';
+        // establishes empty arrays to be populated by queries
+        let allRoles = [];
+        let allEmployees = [];
 
-          // .prompt({
-        //     name: 'employee-first',
-        //     type: 'input',
-        //     message: "What is the employee's first name?",
-        // },
-        // {
-        //     name: 'employee-last',
-        //     type: 'input',
-        //     message: "What is the employee's last name?",
-        // },
-        // {
-        //     name: 'employee-position',
-        //     type: 'list',
-        //     message: "What is the employee's position?",
-        //     choices: ['tbd - need to show the list of positions'],
-        // },
-        // {
-        //     name: 'employee-manager',
-        //     type: 'list',
-        //     message: "Who is the employee's manager?",
-        //     choices: ['tbd - need to show the list of employees'],
-        // })
+        // pushes each Role into an array to be used by a choice question
+        connection.query("SELECT title AS 'Role' FROM employees.role", (err, res) => {
+          if (err) throw err;
+          res.forEach(({Role}) => {
+            allRoles.push(Role);
+          });
+          return allRoles;
+        });
 
+        // pushes each Employee into an array to be used by a choice question
+        connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee", (err, res) => {
+          if (err) throw err;
+          res.forEach(({Employee}) => {
+            allEmployees.push(Employee);
+            return allEmployees;
+            })
+          });
 
-        connection.query(query, (err, res) => {
-          console.table(res);
+        inquirer
+        .prompt([
+        {
+            name: 'employee_first',
+            type: 'input',
+            message: "What is the employee's first name?",
+        },
+        {
+            name: 'employee_last',
+            type: 'input',
+            message: "What is the employee's last name?",
+        },
+        {
+            name: 'employee_role',
+            type: 'input',
+            message: "Enter the employee's role ID.",
+        },
+
+        {
+          name: 'employee_manager',
+          type: 'input',
+          message: "Enter the employee's manager's ID.",
+        }])
+          .then((answer) => {
+            connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answer['employee_first']}", "${answer['employee_last']}", ${answer['employee_role']}, ${answer['employee_manager']})`,
+             (err, res) => {
+              if (err) throw err;
+              console.log("Employee added!");
+              actionList();
+        });
       });
-        actionList();
-      };
+    }
 
       // removes employee of choice from the db
       function removeEmployee() {
         // collects the first and last names and concatenates them into "Employee" which is then pushed to an arry for user selection
         connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee WHERE manager_id IS NOT NULL", (err, res) => {
+          console.log(res);
           if (err) throw err;
             inquirer
             .prompt({
@@ -135,7 +159,6 @@ const actionList = () => {
               },
           })
           .then((answer) => {
-            console.log(answer['remove-employee']);
             connection.query(`DELETE FROM employees.employee WHERE CONCAT(first_name, ' ', last_name) = '${answer['remove-employee']}'`,
             (err, res) => {
               if (err) throw err;
@@ -164,90 +187,6 @@ const actionList = () => {
     actionList();
   });
   
-
-// //======= McLeod: refer to the icecreamCRUD activity to show how to crud in the db //the Great Bay activity to show inquirer stuff 
-
-// // ======= McLeod: palceholder building blocks...
-
-// // after they select to add an employee
-// // const employees = () => {
-// //     // query the database for all items being auctioned
-// //     connection.query('SELECT * FROM employee', (err, results) => {
-// //       if (err) throw err;
-// //       inquirer
-// //         .prompt([
-// //           {
-// //             name: 'manager',
-// //             type: 'rawlist',
-// //             choices() {
-// //                 // this array holds just the name of the employee that gets pushed up here by that foreach down yonder
-// //               const employeeName = [];
-// //               /*
-// //               [
-// //                 {
-// //                     id: 4567,
-// //                     first_name: 'Brenna',
-// //                     last_name: 'McLeod',
-// //                     position_id: 3456,
-// //                 not sure how null is represented here
-// //                     manager_id: ,
-// //                 },
-// //                 ...
-// //                 ]
-// //               */
-// //             //  need to concat first/last?
-// //              results.forEach((employee) => {
-// //                 employeeName.push(employee.first_name);
-// //             });
-// //               return employeeName;
-// //             },
-// //             message: "Who is the employee's manaager?",
-// //           },
-// //           {
-// //             name: 'bid',
-// //             type: 'input',
-// //             message: 'How much would you like to bid?',
-// //           },
-// //         ])
-// //         .then((answer) => {
-// //           // get the information of the chosen item
-// //           let chosenItem;
-// //           results.forEach((item) => {
-// //             if (item.item_name === answer.choice) {
-// //               chosenItem = item;
-// //             }
-// //           });
-  
-// //           // determine if bid was high enough
-// //           if (chosenItem.highest_bid < parseInt(answer.bid)) {
-// //             // bid was high enough, so update db, let the user know, and start over
-// //             //  UPDATE auctions SET highest_bid = 10 WHERE id = 1
-// //             connection.query(
-// //               'UPDATE auctions SET ? WHERE ?',
-// //               [
-// //                 {
-// //                   highest_bid: answer.bid,
-// //                 },
-// //                 {
-// //                   id: chosenItem.id,
-// //                 },
-// //               ],
-// //               (error) => {
-// //                 if (error) throw err;
-// //                 console.log('Bid placed successfully!');
-// //                 start();
-// //               }
-// //             );
-// //           } else {
-// //             // bid wasn't high enough, so apologize and start over
-// //             console.log('Your bid was too low. Try again...');
-// //             start();
-// //           }
-// //         });
-// //     });
-// //   };
-
-
 // // console.log(
 // //     `${first_name} ${last_name}`
 // // )
