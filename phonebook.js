@@ -10,13 +10,13 @@ const connection = mysql.createConnection({
 });
 
 // function which prompts the user for what action they should take
-const start = () => {
+const actionList = () => {
   inquirer
     .prompt({
       name: 'intro',
       type: 'list',
       message: 'What would you like to do?',
-      choices: ['View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager'],
+      choices: ['View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'Exit'],
     })
     .then((answer) => {
       console.log(answer.intro);
@@ -25,25 +25,29 @@ const start = () => {
           employeebyDept();
           break;
 
-        // case 'View All Employees by Manager':
-        //   employeebyMgr();
-        //   break;
+        case 'View All Employees by Manager':
+          employeebyMgr();
+          break;
 
-        // case 'Add Employee':
-        //   addEmployee();
-        //   break;
+        case 'Add Employee':
+          addEmployee();
+          break;
 
-        // case 'Remove Employee':
-        //   removeEmployee();
-        //   break;
+        case 'Remove Employee':
+          removeEmployee();
+          break;
 
-        // case 'Update Employee Role':
-        //   updateRole();
-        //   break;
+        case 'Update Employee Role':
+          updateRole();
+          break;
 
-        // case 'Update Employee Manager':
-        //   updateMgr();
-        //   break;
+        case 'Update Employee Manager':
+          updateMgr();
+          break;
+
+        case 'Exit':
+          connection.end();
+          break;
           
         default:
           console.log(`Invalid action: ${answer.intro}`);
@@ -54,15 +58,76 @@ const start = () => {
     };
 
       function employeebyDept() {
+        const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
+        connection.query(query, (err, res) => {
+            console.table(res);
+        });
+        actionList();
+      };
+
+      function employeebyMgr() {
+        const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL"
+        connection.query(query, (err, res) => {
+          console.table(res);
+      });
+        actionList();
+      };
+
+      function addEmployee() {
+        const query = 'SELECT title, salary, department_id FROM employees.role';
+
+          // .prompt({
+        //     name: 'employee-first',
+        //     type: 'input',
+        //     message: "What is the employee's first name?",
+        // },
+        // {
+        //     name: 'employee-last',
+        //     type: 'input',
+        //     message: "What is the employee's last name?",
+        // },
+        // {
+        //     name: 'employee-position',
+        //     type: 'list',
+        //     message: "What is the employee's position?",
+        //     choices: ['tbd - need to show the list of positions'],
+        // },
+        // {
+        //     name: 'employee-manager',
+        //     type: 'list',
+        //     message: "Who is the employee's manager?",
+        //     choices: ['tbd - need to show the list of employees'],
+        // })
+
+        
+        connection.query(query, (err, res) => {
+          console.table(res);
+      });
+        actionList();
+      };
+
+      function removeEmployee() {
+        const query = 'SELECT title, salary, department_id FROM employees.role';
+
+      //   .prompt({
+      //     name: 'remove-employee',
+      //     type: 'list',
+      //     message: 'Which employee would you like to remove?',
+      //     choices: ['tbd - need to show the list of employees'],
+      // })
+
+        connection.query(query, (err, res) => {
+          console.table(res);
+      });
+        actionList();
+      };
+
+      function updateMgr() {
         const query = 'SELECT title, salary, department_id FROM employees.role';
         connection.query(query, (err, res) => {
-          res.forEach(({title, salary, department_id}) => {
-            console.log(
-              `Title: ${title} || Salary: ${salary} || Department: ${department_id}`
-            ); 
-          });
-        });
-        connection.end();
+          console.table(res);
+      });
+        actionList();
       };
 
 
@@ -71,42 +136,15 @@ const start = () => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
     // run the start function after the connection is made to prompt the user
-    start();
+    actionList();
   });
   
 
 // //======= McLeod: refer to the icecreamCRUD activity to show how to crud in the db //the Great Bay activity to show inquirer stuff 
 
 // // ======= McLeod: palceholder building blocks...
-// // .prompt({
-// //     name: 'remove-employee',
-// //     type: 'list',
-// //     message: 'Which employee would you like to remove?',
-// //     choices: ['tbd - need to show the list of employees'],
-// // })
 
-// // .prompt({
-// //     name: 'employee-first',
-// //     type: 'input',
-// //     message: "What is the employee's first name?",
-// // },
-// // {
-// //     name: 'employee-last',
-// //     type: 'input',
-// //     message: "What is the employee's last name?",
-// // },
-// // {
-// //     name: 'employee-position',
-// //     type: 'list',
-// //     message: "What is the employee's position?",
-// //     choices: ['tbd - need to show the list of positions'],
-// // },
-// // {
-// //     name: 'employee-manager',
-// //     type: 'list',
-// //     message: "Who is the employee's manager?",
-// //     choices: ['tbd - need to show the list of employees'],
-// // })
+
 
 // // after they select to add an employee
 // // const employees = () => {
