@@ -119,7 +119,7 @@ const actionList = () => {
       // removes employee of choice from the db
       function removeEmployee() {
         // collects the first and last names and concatenates them into "Employee" which is then pushed to an arry for user selection
-        connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee", (err, res) => {
+        connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee WHERE manager_id IS NOT NULL", (err, res) => {
           if (err) throw err;
             inquirer
             .prompt({
@@ -135,7 +135,8 @@ const actionList = () => {
               },
           })
           .then((answer) => {
-            connection.query(`DELETE FROM employees.employee WHERE CONCAT(first_name, ' ', last_name) = "${answer}"`,
+            console.log(answer['remove-employee']);
+            connection.query(`DELETE FROM employees.employee WHERE CONCAT(first_name, ' ', last_name) = '${answer['remove-employee']}'`,
             (err, res) => {
               if (err) throw err;
               console.log("Employee deleted!");
