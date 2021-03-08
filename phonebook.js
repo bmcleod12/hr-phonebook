@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 
+// establishes connection to db
 const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
@@ -9,14 +10,21 @@ const connection = mysql.createConnection({
   database: 'employees',
 });
 
-// function which prompts the user for what action they should take
+// prompts the user for which action to take
 const actionList = () => {
   inquirer
     .prompt({
       name: 'intro',
       type: 'list',
       message: 'What would you like to do?',
-      choices: ['View All Employees by Department', 'View All Employees by Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'Exit'],
+      choices: [
+        'View All Employees by Department', 
+        'View All Employees by Manager',
+        'Add Employee', 
+        'Remove Employee', 
+        'Update Employee Role', 
+        'Update Employee Manager', 
+        'Exit'],
     })
     .then((answer) => {
       console.log(answer.intro);
@@ -54,9 +62,9 @@ const actionList = () => {
           break;
       }
       });
-
     };
 
+      // collects output of Department | Employee | Employee Role |
       function employeebyDept() {
         const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
         connection.query(query, (err, res) => {
@@ -65,6 +73,7 @@ const actionList = () => {
         actionList();
       };
 
+      // collects output of Manager | Employee | Employee Role
       function employeebyMgr() {
         const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL"
         connection.query(query, (err, res) => {
@@ -73,6 +82,7 @@ const actionList = () => {
         actionList();
       };
 
+      // adds a new employee to the db after collecting their information
       function addEmployee() {
         const query = 'SELECT title, salary, department_id FROM employees.role';
 
@@ -99,13 +109,14 @@ const actionList = () => {
         //     choices: ['tbd - need to show the list of employees'],
         // })
 
-        
+
         connection.query(query, (err, res) => {
           console.table(res);
       });
         actionList();
       };
 
+      // removes employee of choice from the db
       function removeEmployee() {
         const query = 'SELECT title, salary, department_id FROM employees.role';
 
@@ -122,6 +133,7 @@ const actionList = () => {
         actionList();
       };
 
+      // changes out an employee's manager
       function updateMgr() {
         const query = 'SELECT title, salary, department_id FROM employees.role';
         connection.query(query, (err, res) => {
