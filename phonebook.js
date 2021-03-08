@@ -118,19 +118,31 @@ const actionList = () => {
 
       // removes employee of choice from the db
       function removeEmployee() {
-        const query = 'SELECT title, salary, department_id FROM employees.role';
-
-      //   .prompt({
-      //     name: 'remove-employee',
-      //     type: 'list',
-      //     message: 'Which employee would you like to remove?',
-      //     choices: ['tbd - need to show the list of employees'],
-      // })
-
-        connection.query(query, (err, res) => {
-          console.table(res);
-      });
-        actionList();
+        // collects the first and last names and concatenates them into "Employee" which is then pushed to an arry for user selection
+        connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee", (err, res) => {
+          if (err) throw err;
+            inquirer
+            .prompt({
+              name: 'remove-employee',
+              type: 'list',
+              message: 'Which employee would you like to remove?',
+              choices() {
+                const choiceArray = [];
+                res.forEach(({Employee}) => {
+                  choiceArray.push(Employee);
+                });
+                return choiceArray;
+              },
+          })
+          .then((answer) => {
+            connection.query(`DELETE FROM employees.employee WHERE CONCAT(first_name, ' ', last_name) = "${answer}"`,
+            (err, res) => {
+              if (err) throw err;
+              console.log("Employee deleted!");
+              actionList();
+            });
+          });  
+        });
       };
 
       // changes out an employee's manager
@@ -155,8 +167,6 @@ const actionList = () => {
 // //======= McLeod: refer to the icecreamCRUD activity to show how to crud in the db //the Great Bay activity to show inquirer stuff 
 
 // // ======= McLeod: palceholder building blocks...
-
-
 
 // // after they select to add an employee
 // // const employees = () => {
