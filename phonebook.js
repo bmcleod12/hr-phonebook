@@ -245,7 +245,7 @@ function updateRole() {
         ],
           (err, res) => {
             if (err) throw err;
-            console.log("Employee deleted!");
+            console.log("Employee updated!");
             actionList();
           });
       });
@@ -255,7 +255,6 @@ function updateRole() {
 function removeEmployee() {
   // collects the first and last names and concatenates them into "Employee" which is then pushed to an arry for user selection
   connection.query("SELECT CONCAT(first_name, ' ', last_name) AS 'Employee' FROM employees.employee WHERE manager_id IS NOT NULL", (err, res) => {
-    console.log(res);
     if (err) throw err;
     inquirer
       .prompt({
