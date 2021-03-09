@@ -11,7 +11,7 @@ Command line application for tracking and updating organizational hierarchy info
 * [License](#license)
 
 ## Walkthrough
-A walkthrough video for this application can be found here:
+A walkthrough video for this application can be found here: https://drive.google.com/file/d/1WI_4ummyjcYmSacXIXGyGjorNcV-GqOx/view?usp=sharing
 
 
 ## License
