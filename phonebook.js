@@ -75,6 +75,7 @@ const actionList = () => {
           break;
 
         case 'Exit':
+          console.log("Until next time!");  
           connection.end();
           break;
 
@@ -89,6 +90,7 @@ const actionList = () => {
 function allDepts() {
   const query = "SELECT id AS 'Department ID', department AS 'Department Name' FROM employees.department";
   connection.query(query, (err, res) => {
+    console.log("--------------------------------------------");
     console.table(res);
   });
   actionList();
@@ -98,6 +100,7 @@ function allDepts() {
 function allRoles() {
   const query = "SELECT id AS 'Role ID', title AS 'Role Name', salary AS 'Salary' FROM employees.role";
   connection.query(query, (err, res) => {
+    console.log("--------------------------------------------");
     console.table(res);
   });
   actionList();
@@ -117,6 +120,7 @@ function allEmployees() {
 function employeebyDept() {
   const query = "SELECT department.department AS 'Department', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id ";
   connection.query(query, (err, res) => {
+    console.log("--------------------------------------------");
     console.table(res);
   });
   actionList();
@@ -126,6 +130,7 @@ function employeebyDept() {
 function employeebyMgr() {
   const query = "SELECT CONCAT(m.first_name, ' ' ,  m.last_name) AS 'Manager', CONCAT(e.first_name, ' ', e.last_name) AS 'Employee', role.title as 'Employee Role' FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role ON e.role_id = role.id WHERE m.first_name IS NOT NULL";
   connection.query(query, (err, res) => {
+    console.log("--------------------------------------------");
     console.table(res);
   });
   actionList();
